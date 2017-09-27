@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,8 +16,7 @@ using WebApiFileUpload.API.Infrastructure;
 namespace WebApiFileUpload.DesktopClient
 {
     public partial class Form1 : Form
-    {
-        const string uploadServiceBaseAddress = "http://localhost:48697/api/fileupload";
+    {        
         public Form1()
         {
             InitializeComponent();
@@ -46,7 +46,7 @@ namespace WebApiFileUpload.DesktopClient
 
             // Set the file dialog to filter for graphics files. 
             this.openFileDialog1.Filter =
-                "Images (*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|" +
+                "Images (*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|" +
                 "All files (*.*)|*.*";
 
             // Allow the user to select multiple images. 
@@ -61,55 +61,59 @@ namespace WebApiFileUpload.DesktopClient
             {
                 try
                 {
-                    HttpClient httpClient = new HttpClient();
-                    // Read the files 
-                    foreach (String file in openFileDialog1.FileNames)
+                    var baseAddress = new Uri(ConfigurationManager.AppSettings.Get("uploadServiceBaseAddress"));
+                    using (HttpClient httpClient = new HttpClient())
                     {
+                        httpClient.BaseAddress = baseAddress;
 
-                        var fileStream = File.Open(file, FileMode.Open);
-                        var fileInfo = new FileInfo(file);
-                        FileUploadResult uploadResult = null;
-                        bool _fileUploaded = false;
-
-                        var content = new MultipartFormDataContent();
-                        content.Add(new StreamContent(fileStream), "\"file\"", string.Format("\"{0}\"", fileInfo.Name)
-                        );
-
-                        Task taskUpload = httpClient.PostAsync(uploadServiceBaseAddress, content).ContinueWith(task =>
+                        // Read the files 
+                        foreach (String file in openFileDialog1.FileNames)
                         {
-                            if (task.Status == TaskStatus.RanToCompletion)
+
+                            var fileStream = File.Open(file, FileMode.Open);
+                            var fileInfo = new FileInfo(file);
+                            FileUploadResult uploadResult = null;
+                            bool _fileUploaded = false;
+
+                            var content = new MultipartFormDataContent();
+                            content.Add(new StreamContent(fileStream), "\"file\"", string.Format("\"{0}\"", fileInfo.Name)
+                            );
+
+                            Task taskUpload = httpClient.PostAsync("api/fileupload", content).ContinueWith(task =>
                             {
-                                var response = task.Result;
-
-                                if (response.IsSuccessStatusCode)
+                                if (task.Status == TaskStatus.RanToCompletion)
                                 {
-                                    uploadResult = response.Content.ReadAsAsync<FileUploadResult>().Result;
-                                    if (uploadResult != null)
-                                        _fileUploaded = true;
+                                    var response = task.Result;
 
-                                    // Read other header values if you want..
-                                    foreach (var header in response.Content.Headers)
+                                    if (response.IsSuccessStatusCode)
                                     {
-                                        Debug.WriteLine("{0}: {1}", header.Key, string.Join(",", header.Value));
+                                        uploadResult = response.Content.ReadAsAsync<FileUploadResult>().Result;
+                                        if (uploadResult != null)
+                                            _fileUploaded = true;
+
+                                        // Read other header values if you want..
+                                        foreach (var header in response.Content.Headers)
+                                        {
+                                            Debug.WriteLine("{0}: {1}", header.Key, string.Join(",", header.Value));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine("Status Code: {0} - {1}", response.StatusCode, response.ReasonPhrase);
+                                        Debug.WriteLine("Response Body: {0}", response.Content.ReadAsStringAsync().Result);
                                     }
                                 }
-                                else
-                                {
-                                    Debug.WriteLine("Status Code: {0} - {1}", response.StatusCode, response.ReasonPhrase);
-                                    Debug.WriteLine("Response Body: {0}", response.Content.ReadAsStringAsync().Result);
-                                }
-                            }
 
-                            fileStream.Dispose();
-                        });
+                                fileStream.Dispose();
+                            });
 
-                        taskUpload.Wait();
-                        if (_fileUploaded)
-                            AddMessage(uploadResult.FileName + " with length " + uploadResult.FileLength
-                                            + " has been uploaded at " + uploadResult.LocalFilePath);
+                            taskUpload.Wait();
+                            if (_fileUploaded)
+                                AddMessage(uploadResult.FileName + " with length " + uploadResult.FileLength
+                                                + " has been uploaded at " + uploadResult.LocalFilePath);
+                        }
+
                     }
-
-                    httpClient.Dispose();
                 }
                 catch (Exception ex)
                 {
@@ -126,8 +130,9 @@ namespace WebApiFileUpload.DesktopClient
                 textBox1.AppendText(Environment.NewLine);
                 textBox1.AppendText(Environment.NewLine);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine("Adding message {0} raised exception {1} ", message, ex);
             }
         }
 

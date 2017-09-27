@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 using WebApiFileUpload.API.Infrastructure;
 
 namespace WebApiFileUpload.API.Controllers
@@ -14,27 +15,17 @@ namespace WebApiFileUpload.API.Controllers
     public class FileUploadController : ApiController
     {
         [MimeMultipart]
-        public async Task<FileUploadResult> Post()
+        [ResponseType(typeof(FileUploadResult))]
+        public async Task<IHttpActionResult> PostAsync()
         {
-            var uploadPath = HttpContext.Current.Server.MapPath("~/Uploads");
-
+            var uploadPath = HttpContext.Current.Server.MapPath("~/Uploads");       
             var multipartFormDataStreamProvider = new UploadMultipartFormProvider(uploadPath);
 
-            // Read the MIME multipart asynchronously 
+            // Read the MIME multipart asynchronously
             await Request.Content.ReadAsMultipartAsync(multipartFormDataStreamProvider);
 
-            string _localFileName = multipartFormDataStreamProvider
-                .FileData.Select(multiPartData => multiPartData.LocalFileName).FirstOrDefault();
-
             // Create response
-            return new FileUploadResult
-            {
-                LocalFilePath = _localFileName,
-
-                FileName = Path.GetFileName(_localFileName),
-
-                FileLength = new FileInfo(_localFileName).Length
-            };
+            return Ok(multipartFormDataStreamProvider.GetFileUploadResult());
         }
     }
 }
