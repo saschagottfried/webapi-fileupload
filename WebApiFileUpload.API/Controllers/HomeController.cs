@@ -13,5 +13,10 @@ namespace WebApiFileUpload.API.Controllers
         {
             return View();
         }
+
+        public ActionResult FileUpload()
+        {
+            return View();
+        }
     }
 }
