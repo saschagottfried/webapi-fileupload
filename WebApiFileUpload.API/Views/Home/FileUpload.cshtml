@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "FileUpload";
 }
 
@@ -7,6 +6,7 @@
 
 <div class="row">
     <form name="form1" method="post" enctype="multipart/form-data" action="~/api/fileupload">
+        @Html.AntiForgeryToken()
         <div>
             <label for="caption">Image Caption</label>
             <input name="caption" type="text" />

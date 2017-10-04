@@ -19,7 +19,15 @@ Nice
 - Update HTTP client code in desktop client using this example (https://www.strathweb.com/2012/08/a-guide-to-asynchronous-file-uploads-in-asp-net-web-api-rtm/)
 - Add progress notification using example code from (https://www.strathweb.com/2012/06/drag-and-drop-files-to-wpf-application-and-asynchronously-upload-to-asp-net-web-api/)
 
+
+Hypermedia API
+
 Upload Files to Azure Blobs
 - Use "Azure Blobs File Upload Sample" from ASP.NET WebApi samples (https://www.asp.net/aspnet/samples/aspnet-web-api)
   - http://aspnet.codeplex.com/sourcecontrol/latest#Samples/WebApi/AzureBlobsFileUploadSample/ReadMe.txt
   - AzureBlobMultipartProvider: http://aspnet.codeplex.com/sourcecontrol/latest#Samples/WebApi/AzureBlobsFileUploadSample/AzureBlobsFileUpload/BlobStorageStreamProvider/AzureBlobStorageMultipartProvider.cs
+
+Restful interface to ressources/collections
+- Support POST/PUT/GET/DELETE
+- Document HTTP status code
+- Return hypermedia links
