@@ -18,7 +18,7 @@ namespace WebApiFileUpload.API.Controllers
         [ResponseType(typeof(FileUploadResult))]
         public async Task<IHttpActionResult> PostAsync()
         {
-            var uploadPath = HttpContext.Current.Server.MapPath("~/Uploads");       
+            var uploadPath = HttpContext.Current.Server.MapPath("~/Uploads");
             var multipartFormDataStreamProvider = new UploadMultipartFormProvider(uploadPath);
 
             // Read the MIME multipart asynchronously

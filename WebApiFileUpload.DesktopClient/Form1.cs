@@ -84,7 +84,7 @@ namespace WebApiFileUpload.DesktopClient
                                 Debug.WriteLine("Response Body: {0}", await response.Content.ReadAsStringAsync());
                             }
 
-                            // Read other header values if you want..
+                            // Read other header values if you want ...
                             foreach (var header in response.Content.Headers)
                             {
                                 Debug.WriteLine("{0}: {1}", header.Key, string.Join(",", header.Value));

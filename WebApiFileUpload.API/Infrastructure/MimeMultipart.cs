@@ -12,16 +12,20 @@ using System.Web.Http.Filters;
 
 namespace WebApiFileUpload.API.Infrastructure
 {
+    /// <summary>
+    /// validate request content is multipart/form-data
+    /// </summary>
+    /// <remarks>
+    /// The HttpResponseException type is a special case. This exception returns any HTTP status code that you specify in the exception constructor. 
+    /// https://docs.microsoft.com/en-us/aspnet/web-api/overview/error-handling/exception-handling#httpresponseexception
+    /// </remarks>
     public class MimeMultipart : ActionFilterAttribute
     {
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
             if (!actionContext.Request.Content.IsMimeMultipartContent())
             {
-                throw new HttpResponseException(
-                    new HttpResponseMessage(
-                        HttpStatusCode.UnsupportedMediaType)
-                );
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
         }
 

@@ -13,7 +13,7 @@ Source
 Open Tasks
 - Add SSL
 - Protect API using OpenID
-- Separate code handling file upload and DTO (FileUploadResult) from request processing / controller
+- Separate code handling file upload and generating a DTO (class FileUploadResult) from request processing / controller
 
 Nice
 - Update HTTP client code in desktop client using this example (https://www.strathweb.com/2012/08/a-guide-to-asynchronous-file-uploads-in-asp-net-web-api-rtm/)
@@ -31,3 +31,13 @@ Restful interface to ressources/collections
 - Support POST/PUT/GET/DELETE
 - Document HTTP status code
 - Return hypermedia links
+- https://msdn.microsoft.com/en-us/magazine/jj883957.aspx
+
+
+Authentication 
+
+OpenID Connect
+- The OAuth 2.0 Authorization Framework -http://chimera.labs.oreilly.com/books/1234000001708/ch16.html
+
+Security filters
+- ASP.NET : ASP.NET Web API Security Filters - https://msdn.microsoft.com/en-us/magazine/dn781361.aspx
