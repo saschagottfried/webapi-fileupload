@@ -136,7 +136,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\UploadMultipartFormProvider.cs" />
-    <Compile Include="Infrastructure\FileUploadResult.cs" />
+    <Compile Include="Models\FileUploadResult.cs" />
     <Compile Include="Infrastructure\MimeMultipart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -160,7 +160,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
   <PropertyGroup>

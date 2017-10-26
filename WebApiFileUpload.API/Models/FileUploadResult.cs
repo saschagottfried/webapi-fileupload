@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApiFileUpload.API.Infrastructure
+namespace WebApiFileUpload.API.Models
 {
     public class FileUploadResult
     {

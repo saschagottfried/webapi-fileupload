@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using WebApiFileUpload.API.Infrastructure;
+using WebApiFileUpload.API.Models;
 
 namespace WebApiFileUpload.API.Controllers
 {

@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebApiFileUpload.API.Infrastructure;
+using WebApiFileUpload.API.Models;
 
 namespace WebApiFileUpload.DesktopClient
 {
@@ -61,44 +62,18 @@ namespace WebApiFileUpload.DesktopClient
             {
                 try
                 {
-                    var baseAddress = new Uri(ConfigurationManager.AppSettings.Get("uploadServiceBaseAddress"));
-                    using (HttpClient httpClient = new HttpClient())
-                    {
-                        httpClient.BaseAddress = baseAddress;
+                    var baseAddress = ConfigurationManager.AppSettings.Get("uploadServiceBaseAddress");
+                    var apiClient = new ApiClient(baseAddress);
 
-                        // Read the files 
                         foreach (String file in openFileDialog1.FileNames)
                         {
-                            var fileStream = File.OpenRead(file);
-                            var fileName = Path.GetFileName(file);                  
-
-                            var content = new MultipartFormDataContent();
-                            content.Add(new StreamContent(fileStream), "\"file\"", string.Format("\"{0}\"", fileName)
-                            );
-
-                            var response = await httpClient.PostAsync("api/fileupload", content);                       
-                            if (!response.IsSuccessStatusCode)
-                            {
-                                Debug.WriteLine("File upload was not successful.");
-                                Debug.WriteLine("Status Code: {0} - {1}", response.StatusCode, response.ReasonPhrase);
-                                Debug.WriteLine("Response Body: {0}", await response.Content.ReadAsStringAsync());
-                            }
-
-                            // Read other header values if you want ...
-                            foreach (var header in response.Content.Headers)
-                            {
-                                Debug.WriteLine("{0}: {1}", header.Key, string.Join(",", header.Value));
-                            }
-
-                            // Process response
-                            var fileUploadResult = await response.Content.ReadAsAsync<FileUploadResult>();
+                            var fileUploadResult = await apiClient.UploadFileAsync(file);
 
                             // Update UI control
                             if (fileUploadResult != null)
                                 AddMessage(fileUploadResult.FileName + " with length " + fileUploadResult.FileLength
                                                 + " has been uploaded at " + fileUploadResult.LocalFilePath);
                         }
-                    }
                 }
                 catch (Exception ex)
                 {
